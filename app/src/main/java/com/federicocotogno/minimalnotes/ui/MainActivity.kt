@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
     private fun introAnimation() {
 
         v_blackScreen.animate().apply {
-            duration = 3000
+            duration = 2000
             alpha(0f)
         }.start()
 

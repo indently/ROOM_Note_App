@@ -20,16 +20,11 @@ class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
         init {
 
             itemView.setOnClickListener {
-                Toast.makeText(itemView.context, "Long press to edit notes.", Toast.LENGTH_SHORT).show()
-            }
-
-            itemView.setOnLongClickListener {
                 val position = adapterPosition
                 Log.d("ListAdapter", position.toString())
 
                 val action = ListFragmentDirections.actionListFragmentToUpdateFragment(notesList[position])
                 itemView.findNavController().navigate(action)
-                return@setOnLongClickListener true
             }
         }
     }
