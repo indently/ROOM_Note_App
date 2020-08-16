@@ -9,7 +9,9 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.federicocotogno.minimalnotes.R
 import com.federicocotogno.minimalnotes.adapters.ListAdapter
 import com.federicocotogno.minimalnotes.data.NoteViewModel
@@ -54,6 +56,43 @@ class ListFragment : Fragment() {
 
         //Show the options menu in this fragment
         setHasOptionsMenu(true)
+
+        swipeRecyclerView()
+    }
+    private fun swipeRecyclerView() {
+
+        //Adds a swipe to the Recycler View to remove items more fluently
+        val itemTouchHelperCallback =
+            object :
+                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    //gets the not at the position
+                    val note = adapter.notesList[viewHolder.adapterPosition]
+                    myNoteViewModel.deleteNote(note)
+
+                    Toast.makeText(
+                        context,
+                        "Note deleted!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            }
+
+        val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(rv_recyclerView)
+
+
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

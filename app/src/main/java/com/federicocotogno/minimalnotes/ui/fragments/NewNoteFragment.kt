@@ -74,7 +74,7 @@ class NewNoteFragment : Fragment() {
     private fun currentTimeStamp() {
         val currentTime = System.currentTimeMillis()
         val dateFormat = SimpleDateFormat("dd/MM/yy")
-        val timeFormat = SimpleDateFormat("hh:mm")
+        val timeFormat = SimpleDateFormat("HH:mm")
         val dateTime = Date(currentTime)
 
         val dateString = dateFormat.format(dateTime)

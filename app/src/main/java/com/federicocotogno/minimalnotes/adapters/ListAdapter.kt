@@ -13,7 +13,7 @@ import com.federicocotogno.minimalnotes.ui.fragments.ListFragmentDirections
 import kotlinx.android.synthetic.main.note_item.view.*
 
 class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
-    private var  notesList = emptyList<Note>()
+    var notesList = emptyList<Note>()
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
