@@ -13,6 +13,7 @@ import androidx.navigation.fragment.navArgs
 import com.federicocotogno.minimalnotes.R
 import com.federicocotogno.minimalnotes.data.Note
 import com.federicocotogno.minimalnotes.data.NoteViewModel
+import com.federicocotogno.minimalnotes.utils.CurrentTimeStamp
 import kotlinx.android.synthetic.main.fragment_new_note.*
 import kotlinx.android.synthetic.main.fragment_update.*
 import java.text.SimpleDateFormat
@@ -23,6 +24,7 @@ class UpdateFragment : Fragment() {
     private val args by navArgs<UpdateFragmentArgs>()
     private lateinit var myNoteViewModel: NoteViewModel
     private lateinit var timeStamp: String
+    private lateinit var currentTimeStamp: CurrentTimeStamp
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,6 +34,8 @@ class UpdateFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        currentTimeStamp = CurrentTimeStamp()
+
         myNoteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
         //Updates the EditTexts with current data
@@ -39,7 +43,6 @@ class UpdateFragment : Fragment() {
         et_update_description.setText(args.currentNote.note)
 
         fab_updateNote.setOnClickListener {
-            currentTimeStamp()
             updateDatabase()
             fab_updateNote.hideKeyboard()
 
@@ -60,24 +63,15 @@ class UpdateFragment : Fragment() {
             description = "No description"
         }
 
+        //retrieves current timestamp
+        timeStamp = currentTimeStamp.getCurrentTimeStamp()
+
         //Updates current info to the database
         val note = Note(args.currentNote.id, title, description, timeStamp)
         myNoteViewModel.updateNote(note)
 
         //Navigate back
         findNavController().navigate(R.id.action_updateFragment_to_listFragment)
-    }
-
-    private fun currentTimeStamp() {
-        val currentTime = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("dd/MM/yy")
-        val timeFormat = SimpleDateFormat("HH:mm")
-        val dateTime = Date(currentTime)
-
-        val dateString = dateFormat.format(dateTime)
-        val hourString = timeFormat.format(dateTime)
-
-        timeStamp = "Last edited: $dateString at $hourString"
     }
 
 
@@ -105,7 +99,8 @@ class UpdateFragment : Fragment() {
             setMessage("Are you sure you want to delete ${args.currentNote.title}?")
             setPositiveButton("Yes") { _, _ ->
                 myNoteViewModel.deleteNote(args.currentNote)
-                Toast.makeText(context, "${args.currentNote.title} deleted!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "${args.currentNote.title} deleted!", Toast.LENGTH_SHORT)
+                    .show()
                 findNavController().navigate(R.id.action_updateFragment_to_listFragment)
             }
             setNegativeButton("No") { _, _ -> }

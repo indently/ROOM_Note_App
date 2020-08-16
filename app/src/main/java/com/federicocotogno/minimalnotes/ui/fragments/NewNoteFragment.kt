@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import com.federicocotogno.minimalnotes.R
 import com.federicocotogno.minimalnotes.data.Note
 import com.federicocotogno.minimalnotes.data.NoteViewModel
+import com.federicocotogno.minimalnotes.utils.CurrentTimeStamp
 import kotlinx.android.synthetic.main.fragment_new_note.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,6 +23,7 @@ class NewNoteFragment : Fragment() {
 
     private lateinit var myNoteViewModel: NoteViewModel
     private lateinit var timeStamp: String
+    private lateinit var currentTimeStamp: CurrentTimeStamp
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,12 +35,13 @@ class NewNoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        currentTimeStamp = CurrentTimeStamp()
+
         //Initialise ViewModel
         myNoteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
         fab_newNote.setOnClickListener {
 
-            currentTimeStamp()
             updateDatabase()
             fab_newNote.hideKeyboard()
         }
@@ -57,6 +60,9 @@ class NewNoteFragment : Fragment() {
             description = "No description"
         }
 
+        //retrieves current timestamp
+        timeStamp = currentTimeStamp.getCurrentTimeStamp()
+
         //Adds current info to the database
         val note = Note(0, title, description, timeStamp)
         myNoteViewModel.addNote(note)
@@ -69,17 +75,5 @@ class NewNoteFragment : Fragment() {
     private fun View.hideKeyboard() {
         val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(windowToken, 0)
-    }
-
-    private fun currentTimeStamp() {
-        val currentTime = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("dd/MM/yy")
-        val timeFormat = SimpleDateFormat("HH:mm")
-        val dateTime = Date(currentTime)
-
-        val dateString = dateFormat.format(dateTime)
-        val hourString = timeFormat.format(dateTime)
-
-        timeStamp = "Last edited: $dateString at $hourString"
     }
 }

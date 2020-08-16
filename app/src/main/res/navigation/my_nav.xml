@@ -24,7 +24,9 @@
         tools:layout="@layout/fragment_update" >
         <action
             android:id="@+id/action_updateFragment_to_listFragment"
-            app:destination="@id/listFragment" />
+            app:destination="@id/listFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
         <argument
             android:name="currentNote"
             app:argType="com.federicocotogno.minimalnotes.data.Note" />
@@ -36,6 +38,8 @@
         tools:layout="@layout/fragment_new_note" >
         <action
             android:id="@+id/action_newNoteFragment_to_listFragment"
-            app:destination="@id/listFragment" />
+            app:destination="@id/listFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out" />
     </fragment>
 </navigation>
