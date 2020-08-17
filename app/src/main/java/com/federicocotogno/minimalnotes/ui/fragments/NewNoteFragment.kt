@@ -15,6 +15,7 @@ import com.federicocotogno.minimalnotes.data.Note
 import com.federicocotogno.minimalnotes.data.NoteViewModel
 import com.federicocotogno.minimalnotes.utils.CurrentTimeStamp
 import kotlinx.android.synthetic.main.fragment_new_note.*
+import kotlinx.android.synthetic.main.fragment_update.*
 import java.text.SimpleDateFormat
 import java.util.*
 

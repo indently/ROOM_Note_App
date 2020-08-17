@@ -2,10 +2,10 @@ package com.federicocotogno.minimalnotes.ui.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -44,14 +44,25 @@ class ListFragment : Fragment() {
         //Initialise ViewModel
         myNoteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
+        //Keep sort selection updated
+        myNoteViewModel.currentBoolean.observe(viewLifecycleOwner, Observer {
+            orderedByTitle = it
+            Log.d("Boolean", it.toString())
+        })
+
         //Get the data at app start-up
         myNoteViewModel.getAllData.observe(viewLifecycleOwner, Observer {
-            adapter.setData(it)
+            if (!orderedByTitle) {
+                adapter.setData(it)
+            }
         })
 
         //sort by Title
         myNoteViewModel.orderDataByTitle.observe(viewLifecycleOwner, Observer {
             //wait for user to make request to change data order
+            if (orderedByTitle) {
+                adapter.setData(it)
+            }
         })
 
         //Show the options menu in this fragment
@@ -59,6 +70,7 @@ class ListFragment : Fragment() {
 
         swipeRecyclerView()
     }
+
     private fun swipeRecyclerView() {
 
         //Adds a swipe to the Recycler View to remove items more fluently
@@ -70,29 +82,36 @@ class ListFragment : Fragment() {
                     viewHolder: RecyclerView.ViewHolder,
                     target: RecyclerView.ViewHolder
                 ): Boolean {
-
                     return false
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                     //gets the not at the position
                     val note = adapter.notesList[viewHolder.adapterPosition]
-                    myNoteViewModel.deleteNote(note)
 
                     Toast.makeText(
                         context,
                         "Note deleted!",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    //cool animation to cover up bad practise of updating ui for recycler
+                    rv_recyclerView.animate().apply {
+                        translationXBy(-1000f)
+                        duration = 500
+                    }.withEndAction {
+                        rv_recyclerView.animate().apply {
+                            translationXBy(1000f)
+                            duration = 500
+                            myNoteViewModel.deleteNote(note)
+                        }.start()
+                    }
                 }
 
             }
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(rv_recyclerView)
-
-
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -111,17 +130,21 @@ class ListFragment : Fragment() {
 
         //If is false, it will sort data by Title
         if (!orderedByTitle) {
-            orderedByTitle = true
+            myNoteViewModel.currentBoolean.value = true
+
             adapter.setData(myNoteViewModel.orderDataByTitle.value!!)
-            Toast.makeText(context, "Sorted by Title", Toast.LENGTH_SHORT).show()
+
+
+            Toast.makeText(context, "Sorted by title", Toast.LENGTH_SHORT).show()
         } else {
             //It will sort data by timeStamp
-            orderedByTitle = false
+            myNoteViewModel.currentBoolean.value = false
+
             adapter.setData(myNoteViewModel.getAllData.value!!)
+
+
             Toast.makeText(context, "Sorted by last edited", Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
     private fun deleteAllNotes() {

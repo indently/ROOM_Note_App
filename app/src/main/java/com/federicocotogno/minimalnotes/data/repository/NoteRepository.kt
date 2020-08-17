@@ -1,6 +1,8 @@
-package com.federicocotogno.minimalnotes.data
+package com.federicocotogno.minimalnotes.data.repository
 
 import androidx.lifecycle.LiveData
+import com.federicocotogno.minimalnotes.data.Note
+import com.federicocotogno.minimalnotes.data.NoteDao
 
 class NoteRepository(private val noteDao: NoteDao) {
     val getAllData: LiveData<List<Note>> = noteDao.getAllData()

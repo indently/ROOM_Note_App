@@ -3,7 +3,9 @@ package com.federicocotogno.minimalnotes.data
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.federicocotogno.minimalnotes.data.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -13,9 +15,14 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     val getAllData: LiveData<List<Note>>
     val orderDataByTitle: LiveData<List<Note>>
 
+    val currentBoolean: MutableLiveData<Boolean> by lazy {
+        MutableLiveData<Boolean>()
+    }
+
     init {
         val noteDao = NoteDatabase.getDatabase(application).noteDao()
-        repository = NoteRepository(noteDao)
+        repository =
+            NoteRepository(noteDao)
 
         getAllData = repository.getAllData
 

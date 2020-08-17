@@ -23,14 +23,17 @@ class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
                 val position = adapterPosition
                 Log.d("ListAdapter", position.toString())
 
-                val action = ListFragmentDirections.actionListFragmentToUpdateFragment(notesList[position])
+                val action =
+                    ListFragmentDirections.actionListFragmentToUpdateFragment(notesList[position])
                 itemView.findNavController().navigate(action)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        return MyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.note_item,parent, false))
+        return MyViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.note_item, parent, false)
+        )
     }
 
     override fun getItemCount(): Int {
@@ -48,5 +51,9 @@ class ListAdapter : RecyclerView.Adapter<ListAdapter.MyViewHolder>() {
     fun setData(user: List<Note>) {
         this.notesList = user
         notifyDataSetChanged()
+    }
+
+    fun removeItem(position: Int) {
+        notifyItemRemoved(position)
     }
 }
