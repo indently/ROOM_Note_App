@@ -1,6 +1,7 @@
 package com.federicocotogno.minimalnotes.ui.fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -14,7 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.federicocotogno.minimalnotes.R
 import com.federicocotogno.minimalnotes.adapters.ListAdapter
-import com.federicocotogno.minimalnotes.data.NoteViewModel
+import com.federicocotogno.minimalnotes.data.viewmodel.NoteViewModel
 import kotlinx.android.synthetic.main.fragment_list.*
 
 
@@ -33,6 +34,8 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         //Floating action button
+        loadData()
+
         fab_add.setOnClickListener {
             findNavController().navigate(R.id.action_listFragment_to_newNoteFragment)
         }
@@ -41,6 +44,31 @@ class ListFragment : Fragment() {
         rv_recyclerView.adapter = adapter
         rv_recyclerView.layoutManager = LinearLayoutManager(context)
 
+        //Takes care of the viewModels
+        viewModels()
+
+        //Show the options menu in this fragment
+        setHasOptionsMenu(true)
+
+        //Adds swiping to the recycler view
+        swipeRecyclerView()
+    }
+
+    private fun saveData() {
+        val sp = activity?.getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE) ?: return
+        with(sp.edit()) {
+            putBoolean("sortedBoolean", orderedByTitle)
+            commit()
+        }
+    }
+
+    private fun loadData() {
+        val sp = activity?.getSharedPreferences("SHARED_PREFS", Context.MODE_PRIVATE) ?: return
+        orderedByTitle = sp.getBoolean("sortedBoolean", false)
+
+    }
+
+    private fun viewModels() {
         //Initialise ViewModel
         myNoteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
 
@@ -48,12 +76,15 @@ class ListFragment : Fragment() {
         myNoteViewModel.currentBoolean.observe(viewLifecycleOwner, Observer {
             orderedByTitle = it
             Log.d("Boolean", it.toString())
+
         })
 
         //Get the data at app start-up
         myNoteViewModel.getAllData.observe(viewLifecycleOwner, Observer {
             if (!orderedByTitle) {
                 adapter.setData(it)
+                tv_sort_text.text = getString(R.string.sort_by_last_edited)
+
             }
         })
 
@@ -62,13 +93,9 @@ class ListFragment : Fragment() {
             //wait for user to make request to change data order
             if (orderedByTitle) {
                 adapter.setData(it)
+                tv_sort_text.text = getString(R.string.sort_by_title)
             }
         })
-
-        //Show the options menu in this fragment
-        setHasOptionsMenu(true)
-
-        swipeRecyclerView()
     }
 
     private fun swipeRecyclerView() {
@@ -97,12 +124,12 @@ class ListFragment : Fragment() {
 
                     //cool animation to cover up bad practise of updating ui for recycler
                     rv_recyclerView.animate().apply {
-                        translationXBy(-1000f)
-                        duration = 500
+                        translationXBy(-2000f)
+                        duration = 300
                     }.withEndAction {
                         rv_recyclerView.animate().apply {
-                            translationXBy(1000f)
-                            duration = 500
+                            translationXBy(2000f)
+                            duration = 300
                             myNoteViewModel.deleteNote(note)
                         }.start()
                     }
@@ -121,31 +148,28 @@ class ListFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_delete -> deleteAllNotes()
-            R.id.nav_sort -> sortNotes()
+            R.id.nav_sort -> {
+                sortNotes()
+                saveData()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
     private fun sortNotes() {
-
-        //If is false, it will sort data by Title
         if (!orderedByTitle) {
+            //Sorts by title
             myNoteViewModel.currentBoolean.value = true
-
             adapter.setData(myNoteViewModel.orderDataByTitle.value!!)
-
-
-            Toast.makeText(context, "Sorted by title", Toast.LENGTH_SHORT).show()
+            tv_sort_text.text = getString(R.string.sort_by_title)
         } else {
-            //It will sort data by timeStamp
+            //Sorts by timestamp
             myNoteViewModel.currentBoolean.value = false
-
             adapter.setData(myNoteViewModel.getAllData.value!!)
-
-
-            Toast.makeText(context, "Sorted by last edited", Toast.LENGTH_SHORT).show()
+            tv_sort_text.text = getString(R.string.sort_by_last_edited)
         }
     }
+
 
     private fun deleteAllNotes() {
         val dialogBuilder = AlertDialog.Builder(context)

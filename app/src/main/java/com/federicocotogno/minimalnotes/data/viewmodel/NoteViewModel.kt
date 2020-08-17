@@ -1,10 +1,12 @@
-package com.federicocotogno.minimalnotes.data
+package com.federicocotogno.minimalnotes.data.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.federicocotogno.minimalnotes.data.Note
+import com.federicocotogno.minimalnotes.data.NoteDatabase
 import com.federicocotogno.minimalnotes.data.repository.NoteRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +22,9 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     init {
-        val noteDao = NoteDatabase.getDatabase(application).noteDao()
+        val noteDao = NoteDatabase.getDatabase(
+            application
+        ).noteDao()
         repository =
             NoteRepository(noteDao)
 

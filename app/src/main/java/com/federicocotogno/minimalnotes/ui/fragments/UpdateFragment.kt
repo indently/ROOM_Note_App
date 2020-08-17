@@ -12,12 +12,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.federicocotogno.minimalnotes.R
 import com.federicocotogno.minimalnotes.data.Note
-import com.federicocotogno.minimalnotes.data.NoteViewModel
+import com.federicocotogno.minimalnotes.data.viewmodel.NoteViewModel
 import com.federicocotogno.minimalnotes.utils.CurrentTimeStamp
-import kotlinx.android.synthetic.main.fragment_new_note.*
 import kotlinx.android.synthetic.main.fragment_update.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 class UpdateFragment : Fragment() {
 
@@ -67,7 +64,12 @@ class UpdateFragment : Fragment() {
         timeStamp = currentTimeStamp.getCurrentTimeStamp()
 
         //Updates current info to the database
-        val note = Note(args.currentNote.id, title, description, timeStamp)
+        val note = Note(
+            args.currentNote.id,
+            title,
+            description,
+            timeStamp
+        )
         myNoteViewModel.updateNote(note)
 
         //Navigate back

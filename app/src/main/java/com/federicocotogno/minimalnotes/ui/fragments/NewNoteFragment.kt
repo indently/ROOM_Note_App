@@ -2,7 +2,6 @@ package com.federicocotogno.minimalnotes.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.federicocotogno.minimalnotes.R
 import com.federicocotogno.minimalnotes.data.Note
-import com.federicocotogno.minimalnotes.data.NoteViewModel
+import com.federicocotogno.minimalnotes.data.viewmodel.NoteViewModel
 import com.federicocotogno.minimalnotes.utils.CurrentTimeStamp
 import kotlinx.android.synthetic.main.fragment_new_note.*
-import kotlinx.android.synthetic.main.fragment_update.*
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 class NewNoteFragment : Fragment() {
@@ -65,7 +61,12 @@ class NewNoteFragment : Fragment() {
         timeStamp = currentTimeStamp.getCurrentTimeStamp()
 
         //Adds current info to the database
-        val note = Note(0, title, description, timeStamp)
+        val note = Note(
+            0,
+            title,
+            description,
+            timeStamp
+        )
         myNoteViewModel.addNote(note)
 
         findNavController().navigate(R.id.action_newNoteFragment_to_listFragment)

@@ -3,4 +3,6 @@
     <string name="test_text">This should be long to simulate a note being taken for the user. And maybe it might be even a few lines long!</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sort_by_last_edited">Sorted by: Last edited</string>
+    <string name="sort_by_title">Sorted by: Title</string>
 </resources>
