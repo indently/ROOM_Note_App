@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="Title"
+                android:maxLines="2"
                 android:textColor="@android:color/black"
                 android:textSize="20sp" />
 
