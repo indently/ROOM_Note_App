@@ -9,7 +9,7 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addNote(note: Note)
 
-    @Query("SELECT * FROM note_table ORDER BY timeStamp DESC")
+    @Query("SELECT * FROM note_table ORDER BY id DESC")
     fun getAllData(): LiveData<List<Note>>
 
     @Query("SELECT * FROM note_table ORDER BY LOWER(title) ASC")

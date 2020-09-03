@@ -103,6 +103,7 @@ class UpdateFragment : Fragment() {
                 myNoteViewModel.deleteNote(args.currentNote)
                 Toast.makeText(context, "${args.currentNote.title} deleted!", Toast.LENGTH_SHORT)
                     .show()
+
                 findNavController().navigate(R.id.action_updateFragment_to_listFragment)
             }
             setNegativeButton("No") { _, _ -> }
